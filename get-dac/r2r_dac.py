@@ -16,17 +16,11 @@ class R2R_DAC:
         GPIO.cleanup()
 
     def set_number(self, number) -> None:
-        if (0 <= number <= 255):
-            binary = [int(el) for el in bin(number)[2:].zfill(8)]
-            GPIO.output(self.gpio_bits, binary)
-        else:
-            GPIO.output(self.gpio_bits, 0)
+        number = max(0, min(255, number))
+        GPIO.output(self.gpio_bits, number)
 
 
     def set_voltage(self, voltage) -> None:
-
-        userin = voltage
-
         def voltage_to_number(voltage) -> int:
             if not (0.0 <= voltage <= self.dynamic_range):
                 print(f'Voltage out of DAC range (0.00 - {self.dynamic_range:.2f} V)')
@@ -34,12 +28,12 @@ class R2R_DAC:
                 return 0
             return int(voltage / self.dynamic_range * 255)
 
-        binary = [int(el) for el in bin(voltage_to_number(userin))[2:].zfill(8)]
+        binary = [int(el) for el in bin(voltage_to_number(voltage))[2:].zfill(8)]
         GPIO.output(self.gpio_bits, binary)
 
 if __name__ == '__main__':
     try:
-        dac = R2R_DAC([22, 27, 17, 26, 25, 21, 20, 16][::-1], 3.15, True)
+        dac = R2R_DAC([22, 27, 17, 26, 25, 21, 20, 16][::-1], 3.153, True)
 
         while True:
             try:
