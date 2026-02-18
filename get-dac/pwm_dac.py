@@ -17,7 +17,7 @@ class PWM_DAC:
         GPIO.output(self.gpio_bits, 0)
         GPIO.cleanup()
 
-    def set_voltage(self, voltage):
+    def set_voltage(self, vol2tage):
         number = int(voltage / self.dynamic_range * 100)
         self.pwm.ChangeDutyCycle(number)
 
