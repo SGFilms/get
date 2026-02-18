@@ -22,7 +22,7 @@ class PWM_DAC:
         self.pwm.ChangeDutyCycle(number)
 
 if __name__ == '__main__':
-    dac = PWM_DAC(12, 500, 3.153, True)
+    dac = PWM_DAC(12, 2000, 3.153, True)
 
     try:
         
