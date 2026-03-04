@@ -1,8 +1,9 @@
-import mcp4725_driver, signal_generator as sg
+import mcp4725_driver
+import signal_generator as sg
 
 amplitude = 3
 signal_frequency = 10
-sampling_frequency = 20000
+sampling_frequency = 2000
 
 dt = 1.0 / sampling_frequency
 t = 0.0
