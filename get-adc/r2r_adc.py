@@ -5,7 +5,6 @@ class R2R_ADC:
         self.dynamic_range = dynamic_range
         self.verbose = verbose
         self.compare_time = compare_time
-        self.last_n = 0
 
         self.bits_gpio = [26, 20, 19, 16, 13, 12, 25, 11]
         self.comp_gpio = 21
@@ -23,29 +22,21 @@ class R2R_ADC:
         GPIO.output(self.bits_gpio, binary)
 
     def sequential_counting_adc(self):
-        n = -1
-        while GPIO.input(self.comp_gpio) == 0:
-            if n < 255:
-                n += 1
-                print(n)
-                binary = [int(el) for el in bin(n)[2:].zfill(8)]
-                GPIO.output(self.bits_gpio, binary)
-                t.sleep(self.compare_time + 0.5)
-            elif n >= 255:
-                print("out of range")
-                return
+        for k in range(0, 256):
+            binary = [int(el) for el in bin(k)[2:].zfill(8)]
+            GPIO.output(self.bits_gpio, binary)
+            t.sleep(self.compare_time)
+            if GPIO.input(self.comp_gpio) == 1:
+                break
+        return k
 
-        return n
-
-        
-            
     def get_sc_voltage(self):
         self.sequential_counting_adc()
-        return float( self.last_n / 255 * self.dynamic_range )
+        return float( self.sequential_counting_adc() / 255 * self.dynamic_range )
 
 if __name__ == "__main__":
     try:
-        adc = R2R_ADC(3.296)
+        adc = R2R_ADC(3.175)
 
         while True:
             print(adc.get_sc_voltage())
