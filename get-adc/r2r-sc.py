@@ -12,7 +12,8 @@ try:
     while (time.time() - t_start) < duration:
         voltage_values.append(adc.get_sc_voltage())
         time_values.append(time.time() - t_start)
-    adc_plot.plot_voltage_vs_time(time_values, voltage_values)
+    #adc_plot.plot_voltage_vs_time(time_values, voltage_values)
+    adc_plot.plot_sampling_period_hist(time_values)
 
 finally:
     adc.deinit()
