@@ -21,11 +21,11 @@ class MCP3021:
         return number
 
     def get_voltage(self):
-        return float(self.get_number() / 255 * self.dynamic_range)
+        return float(self.get_number() / 1023 * self.dynamic_range)
 
 if __name__ == "__main__":
     try:
-        adc = MCP3021(5.200)
+        adc = MCP3021(5.2)
 
         while True:
             print(adc.get_voltage())
