@@ -1,7 +1,7 @@
 import RPi.GPIO as GPIO, time as t
 
 class R2R_ADC:
-    def __init__(self, dynamic_range, compare_time = 0.01, verbose = False) -> None:
+    def __init__(self, dynamic_range, compare_time = 0.001, verbose = False) -> None:
         self.dynamic_range = dynamic_range
         self.verbose = verbose
         self.compare_time = compare_time
@@ -32,14 +32,32 @@ class R2R_ADC:
 
     def get_sc_voltage(self):
         self.sequential_counting_adc()
-        return float( self.sequential_counting_adc() / 255 * self.dynamic_range )
+        return float(self.sequential_counting_adc() / 255 * self.dynamic_range)
+
+    def succesive_approximation_adc(self):
+        code = 0
+
+        for bit in range(7, -1, -1):
+            test_code = code | (1 << bit)
+            binary = [int(el) for el in bin(test_code)[2:].zfill(8)]
+            GPIO.output(self.bits_gpio, binary)
+            t.sleep(self.compare_time)
+            if GPIO.input(self.comp_gpio) == 0:
+                code = test_code
+
+        return code
+
+    def get_sar_voltage(self):
+        self.succesive_approximation_adc()
+        return float(self.succesive_approximation_adc() / 255 * self.dynamic_range)
+
 
 if __name__ == "__main__":
     try:
         adc = R2R_ADC(3.175)
 
         while True:
-            print(adc.get_sc_voltage())
+            print(adc.get_sar_voltage())
 
     finally:
         adc.deinit()
